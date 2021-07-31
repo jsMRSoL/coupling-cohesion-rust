@@ -1,10 +1,57 @@
 mod random;
 
+use std::collections::HashMap;
+
 use random::Random;
 
-struct VehicleRegistry {}
+struct VehicleInfo {
+    brand: String,
+    electric: bool,
+    catalogue_price: i32,
+}
+
+impl VehicleInfo {
+    fn new(brand: String, electric: bool, catalogue_price: i32) -> Self {
+	Self {
+	    brand,
+	    electric,
+	    catalogue_price,
+	}
+    }
+
+    fn compute_tax(&self) -> f32 {
+	let mut tax_percentage = 0.05;
+	if self.electric {
+	    tax_percentage = 0.02
+	}
+
+	tax_percentage * self.catalogue_price as f32
+    }
+
+    fn print(&self) {
+	println!("Brand: {}", &self.brand);
+	println!("Payable tax: {}", &self.compute_tax());
+    }
+}
+
+struct VehicleRegistry {
+    vehicle_info: HashMap<String, VehicleInfo>
+}
 
 impl VehicleRegistry {
+    fn new(self) -> Self {
+	// FIXME!!
+	let mut map: = HashMap::new();
+	self.add_vehicle_info("Tesla Model 3", true, 60000);
+	self.add_vehicle_info("Volkswagen ID 3", true, 35000);
+	self.add_vehicle_info("BMW 5", false, 45000);
+	self.add_vehicle_info("Tesla Model Y", true, 75000);
+    }
+
+    fn add_vehicle_info(&self, brand: String, electric: bool, catalogue_price: i32) {
+	let v = VehicleInfo::new(brand, electric, catalogue_price);
+	&self.vehicle_info.insert(brand, v);
+    }
     fn generate_vehicle_id(&self, length: u8) -> String {
         Random::rand_alpha(length)
     }
@@ -29,26 +76,6 @@ impl Application {
 	// now generate a license plate
 	let license_plate: String = registry.generate_vehicle_license(&vehicle_id);
 
-	// compute the catalogue price
-	let mut catalogue_price: i32 = 0;
-	if brand == "Tesla Model 3" {
-	    catalogue_price = 60000;
-	} else if brand == "Volkswagen ID3" {
-	    catalogue_price = 35000;
-	} else if brand == "BMW 5" {
-	    catalogue_price = 45000;
-	}
-	
-	// compute the tax percentage
-	// default is 5%
-	// 2% if electric
-	let mut tax_percentage = 0.05;
-	if brand == "Tesla Model 3" || brand == "Volkswagen ID3" {
-	    tax_percentage = 0.02
-	}
-
-	// compute the payable tax
-	let payable_tax = tax_percentage * catalogue_price as f32;
 	
 	// print out the vehicle registration information
 	println!("Registration complete. Vehicle info:");
