@@ -18,11 +18,11 @@ impl Random {
 	output
     }
     pub fn rand_alpha(length: u8) -> String {
-	return Random::rand_string(length, ALPHA);
+	Random::rand_string(length, ALPHA)
     }
 
     pub fn rand_numeric(length: u8) -> String {
-	return Random::rand_string(length, NUMERIC)
+	Random::rand_string(length, NUMERIC)
     }
 }
 
