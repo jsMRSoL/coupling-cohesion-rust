@@ -5,14 +5,14 @@ use std::collections::HashMap;
 use random::Random;
 
 #[derive(Debug, Clone)]
-struct VehicleInfo {
-    brand: String,
+struct VehicleInfo<'a> {
+    brand: &'a str,
     electric: bool,
     catalogue_price: i32,
 }
 
-impl VehicleInfo {
-    fn new(brand: String, electric: bool, catalogue_price: i32) -> Self {
+impl<'a> VehicleInfo<'a> {
+    fn new(brand: &'a str, electric: bool, catalogue_price: i32) -> Self {
         Self {
             brand,
             electric,
@@ -38,7 +38,7 @@ impl VehicleInfo {
 struct Vehicle<'a> {
     id: String,
     license_plate: String,
-    info: &'a VehicleInfo,
+    info: &'a VehicleInfo<'a>,
 }
 
 impl<'a> Vehicle<'a> {
@@ -54,15 +54,15 @@ impl<'a> Vehicle<'a> {
         println!("Id: {}", self.id);
         println!("License plate: {}", self.license_plate);
         self.info.print();
-	println!("");
+        println!("");
     }
 }
 
-struct VehicleRegistry {
-    vehicle_info: HashMap<String, VehicleInfo>,
+struct VehicleRegistry<'a> {
+    vehicle_info: HashMap<&'a str, VehicleInfo<'a>>,
 }
 
-impl VehicleRegistry {
+impl<'a> VehicleRegistry<'a> {
     fn new() -> Self {
         let mut map = HashMap::new();
         VehicleRegistry::add_vehicle_info(&mut map, "Tesla Model 3", true, 60000);
@@ -73,13 +73,13 @@ impl VehicleRegistry {
     }
 
     fn add_vehicle_info(
-        map: &mut HashMap<String, VehicleInfo>,
-        brand: &str,
+        map: &mut HashMap<&'a str, VehicleInfo<'a>>,
+        brand: &'a str,
         electric: bool,
         catalogue_price: i32,
     ) {
-        let v = VehicleInfo::new(brand.to_string(), electric, catalogue_price);
-        map.insert(brand.to_string(), v);
+        let v = VehicleInfo::new(brand, electric, catalogue_price);
+        map.insert(brand, v);
     }
 
     fn generate_vehicle_id(&self, length: u8) -> String {
