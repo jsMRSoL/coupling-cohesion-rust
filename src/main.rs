@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 use random::Random;
 
+#[derive(Debug, Clone)]
 struct VehicleInfo {
     brand: String,
     electric: bool,
@@ -34,24 +35,49 @@ impl VehicleInfo {
     }
 }
 
+struct Vehicle {
+    id: String,
+    license_plate: String,
+    info: VehicleInfo,
+}
+
+impl Vehicle {
+    fn new(id: String, license_plate: String, info: VehicleInfo) -> Self {
+	Self {
+	    id,
+	    license_plate,
+	    info,
+	}
+    }
+
+    fn print(&self) {
+	println!("Id: {}", self.id);
+	println!("License plate: {}", self.license_plate);
+	self.info.print();
+    }
+}
+
 struct VehicleRegistry {
     vehicle_info: HashMap<String, VehicleInfo>
 }
 
 impl VehicleRegistry {
-    fn new(self) -> Self {
-	// FIXME!!
-	let mut map: = HashMap::new();
-	self.add_vehicle_info("Tesla Model 3", true, 60000);
-	self.add_vehicle_info("Volkswagen ID 3", true, 35000);
-	self.add_vehicle_info("BMW 5", false, 45000);
-	self.add_vehicle_info("Tesla Model Y", true, 75000);
+    fn new() -> Self {
+	let mut map = HashMap::new();
+	VehicleRegistry::add_vehicle_info(&mut map, "Tesla Model 3", true, 60000);
+	VehicleRegistry::add_vehicle_info(&mut map, "Volkswagen ID3", true, 35000);
+	VehicleRegistry::add_vehicle_info(&mut map, "BMW 5", false, 45000);
+	VehicleRegistry::add_vehicle_info(&mut map, "Tesla Model Y", true, 75000);
+	Self {
+	    vehicle_info: map,
+	}
     }
 
-    fn add_vehicle_info(&self, brand: String, electric: bool, catalogue_price: i32) {
-	let v = VehicleInfo::new(brand, electric, catalogue_price);
-	&self.vehicle_info.insert(brand, v);
+    fn add_vehicle_info(map: &mut HashMap<String, VehicleInfo>, brand: &str, electric: bool, catalogue_price: i32) {
+	let v = VehicleInfo::new(brand.to_string(), electric, catalogue_price);
+	map.insert(brand.to_string(), v);
     }
+
     fn generate_vehicle_id(&self, length: u8) -> String {
         Random::rand_alpha(length)
     }
@@ -64,31 +90,27 @@ impl VehicleRegistry {
             Random::rand_alpha(2)
         )
     }
+
+    fn create_vehicle(&self, brand: &str) -> Vehicle {
+	let id:String = self.generate_vehicle_id(12);
+	let license_plate: String = self.generate_vehicle_license(&id);
+	let info: VehicleInfo = self.vehicle_info.get(brand).unwrap().clone();
+	return Vehicle::new(id, license_plate, info)
+	}
 }
 
 struct Application {}
+
 impl Application {
     fn register_vehicle(&self, brand: &str) {
 	// create a registry instance
-	let registry = VehicleRegistry{};
-	// generate a vehicle id of length 12
-	let vehicle_id: String = registry.generate_vehicle_id(12);
-	// now generate a license plate
-	let license_plate: String = registry.generate_vehicle_license(&vehicle_id);
-
-	
-	// print out the vehicle registration information
-	println!("Registration complete. Vehicle info:");
-	println!("Brand: {}", &brand);
-	println!("Id: {}", &vehicle_id);
-	println!("License plate: {}", &license_plate);
-	println!("Payable tax: {}", payable_tax);
+	let registry = VehicleRegistry::new();
+	let vehicle = registry.create_vehicle(brand);
+	vehicle.print();
     }
 }
 
 fn main() {
-    // println!("{}", Random::rand_alpha(2));
-    // println!("{}", Random::rand_numeric(2));
     let app = Application{};
     app.register_vehicle("Volkswagen ID3");
     app.register_vehicle("Tesla Model 3");
