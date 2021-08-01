@@ -106,17 +106,25 @@ impl<'a> VehicleRegistry<'a> {
 struct Application {}
 
 impl Application {
-    fn register_vehicle(&self, brand: &str) {
-        // create a registry instance
-        let registry = VehicleRegistry::new();
-        let vehicle = registry.create_vehicle(brand);
-        vehicle.print();
+    fn create_registry() -> VehicleRegistry<'static> {
+	VehicleRegistry::new()
     }
+
+    // fn register_vehicle(&self, brand: &str) {
+    //     // create a registry instance
+    //     let registry = VehicleRegistry::new();
+    //     let vehicle = registry.create_vehicle(brand);
+    //     vehicle.print();
+    // }
 }
 
 fn main() {
-    let app = Application {};
-    app.register_vehicle("Volkswagen ID3");
-    app.register_vehicle("Tesla Model 3");
-    app.register_vehicle("BMW 5");
+    // let app = Application {};
+    // app.register_vehicle("Volkswagen ID3");
+    // app.register_vehicle("Tesla Model 3");
+    // app.register_vehicle("BMW 5");
+    let registry = Application::create_registry();
+    registry.create_vehicle("Volkswagen ID3").print();
+    registry.create_vehicle("Tesla Model 3").print();
+    registry.create_vehicle("BMW 5").print();
 }
